@@ -1,0 +1,27 @@
+APIVersion: v1beta1
+Spec:
+  Engine: Docker
+  Verifier: Noop
+  PublisherSpec:
+    Type: Noop
+  Annotations:
+    - event-processor
+  Timeout: 360
+  Docker:
+    Image: {{IMAGE_REPOSITORY}}/{{IMAGE_NAME}}:{{IMAGE_TAG}}
+    Entrypoint:
+      - ./handle-events
+      - -file
+      - /input
+      - -checkpoint
+      - /checkpoint
+      - -timeout
+      - 300s
+  inputs:
+    - StorageSource: LocalDirectory
+      SourcePath: {{EVENTS_FILE}}
+      path: /input
+    - StorageSource: LocalDirectory
+      SourcePath: {{CHECKPOINT_FILE}}
+      ReadWrite: True
+      path: /checkpoint
